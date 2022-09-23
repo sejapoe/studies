@@ -29,7 +29,7 @@ public:
         return {this->realPart + rhs.realPart, this->complexPart + rhs.complexPart};
     }
 
-    complexNumber& operator+=(const complexNumber &rhs) {
+    complexNumber &operator+=(const complexNumber &rhs) {
         this->realPart += rhs.realPart;
         this->complexPart += rhs.complexPart;
         return *this;
@@ -39,7 +39,7 @@ public:
         return {this->realPart - rhs.realPart, this->complexPart - rhs.complexPart};
     }
 
-    complexNumber& operator-=(const complexNumber &rhs) {
+    complexNumber &operator-=(const complexNumber &rhs) {
         this->realPart -= rhs.realPart;
         this->complexPart -= rhs.complexPart;
         return *this;
@@ -50,16 +50,25 @@ public:
                 this->complexPart * rhs.realPart + this->realPart * rhs.complexPart};
     }
 
-    complexNumber& operator*=(const complexNumber &rhs) {
-        double t =
-        return {this->realPart * rhs.realPart - this->complexPart * rhs.complexPart,
-                this->complexPart * rhs.realPart + this->realPart * rhs.complexPart};
+    complexNumber &operator*=(const complexNumber &rhs) {
+        const double t = this->realPart * rhs.realPart - this->complexPart * rhs.complexPart;
+        this->complexPart = this->complexPart * rhs.realPart + this->realPart * rhs.complexPart;
+        this->realPart = t;
+        return *this;
     }
 
     complexNumber operator/(const complexNumber &rhs) const {
         const double de = rhs.complexPart * rhs.complexPart + rhs.realPart * rhs.realPart;
         return {(this->realPart * rhs.realPart + this->complexPart * rhs.complexPart) / de,
                 ((this->complexPart * rhs.realPart - this->realPart * rhs.complexPart) / de)};
+    }
+
+    complexNumber &operator/(const complexNumber &rhs) {
+        const double de = rhs.complexPart * rhs.complexPart + rhs.realPart * rhs.realPart;
+        const double t = (this->realPart * rhs.realPart + this->complexPart * rhs.complexPart) / de;
+        this->complexPart = ((this->complexPart * rhs.realPart - this->realPart * rhs.complexPart) / de);
+        this->realPart = t;
+        return *this;
     }
 
     complexNumber operator-() const {
@@ -74,4 +83,7 @@ int main() {
     cout << a - b << endl;
     cout << a * b << endl;
     cout << a / b << endl;
+    b = a;
+    a *= a;
+    cout << (a == b*b) << endl;
 }
