@@ -3,7 +3,7 @@
 
 using namespace std;
 
-int signx(int x) {
+int sign(int x) {
     return x == 0 ? 0 : x / abs(x);
 }
 
@@ -11,5 +11,5 @@ int main() {
     cout << "Enter a number: ";
     int t;
     cin >> t;
-    cout << "SignX = " << signx(t) << "\n";
+    cout << "Sign(x) = " << sign(t) << "\n";
 }
