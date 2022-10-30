@@ -1,6 +1,7 @@
 //
 // Created by sejapoe on 10/30/22.
 //
+// Проверка баланса скобок в текстовом файле.
 
 #ifndef FIRST_5_4_H
 #define FIRST_5_4_H

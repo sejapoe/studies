@@ -1,6 +1,9 @@
 //
 // Created by sejapoe on 10/30/22.
 //
+// Задан массив F[1:n] из вещественных чисел в десятичной системе счисления.
+// В другом массиве организовать перевод исходного массива в любую систему счисления
+// по желанию пользователя в пределах от двоичной до девятеричной
 
 #ifndef FIRST_5_6_H
 #define FIRST_5_6_H
@@ -84,11 +87,11 @@ void task5_6() {
     }
 
 
-    cout << BLUE_FG << "Enter target notation (2-36)... ";
+    cout << BLUE_FG << "Enter target notation (2-9)... ";
 
     int notation;
     cin >> notation;
-    while (cin.fail() || notation < 2 || notation > 36) {
+    while (cin.fail() || notation < 2 || notation > 9) {
         cout << RED_FG << "Invalid input. Try again: ";
         cin.clear();
         cin.ignore(32767, '\n');

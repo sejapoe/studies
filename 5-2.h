@@ -1,6 +1,7 @@
 //
 // Created by sejapoe on 10/30/22.
 //
+// Решето Эратосфена
 
 #ifndef FIRST_5_2_H
 #define FIRST_5_2_H

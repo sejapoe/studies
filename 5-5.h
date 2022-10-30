@@ -1,6 +1,10 @@
 //
 // Created by sejapoe on 10/30/22.
 //
+// Дано целое число n (вводится с клавиатуры). Вычислить:
+// y = prod(int i = 1; i <= n; i++) {
+//     i! / sum(int j = 1; j <= i; j++) { sin(2*j) }
+// }
 
 #ifndef FIRST_5_5_H
 #define FIRST_5_5_H

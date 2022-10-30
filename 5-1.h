@@ -1,6 +1,7 @@
 //
 // Created by sejapoe on 10/30/22.
 //
+// Алгоритм Евклида
 
 #ifndef FIRST_5_1_H
 #define FIRST_5_1_H

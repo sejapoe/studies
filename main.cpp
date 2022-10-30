@@ -11,14 +11,14 @@
 using namespace std;
 
 int main() {
-    map<string, void (*)()> functions{
-            { "5-1", task5_1 },
-            { "5-2", task5_2 },
-            { "5-3", task5_3 },
-            { "5-4", task5_4 },
-            { "5-5", task5_5 },
-            { "5-6", task5_6 },
-            { "5-7", task5_7 }
+    map<string, pair<string, void (*)()>> functions{
+            {"5-1", {"Алгоритм Евклида",                                               task5_1}},
+            {"5-2", {"Решето Эратосфена",                                              task5_2}},
+            {"5-3", {"Преобразование разделителей: превращение строк в столбцы фраз",                      task5_3}},
+            {"5-4", {"Проверка баланса скобок в текстовом файле",  task5_4}},
+            {"5-5", {"Ряд произведения",                                               task5_5}},
+            {"5-6", {"Перевод массива вещественных чисел в целевую систему счисления", task5_6}},
+            {"5-7", {"Организация хранения массивов в файле и операции с ними",        task5_7}}
     };
     cout << BLUE_FG_BOLD;
     while (true) {
@@ -37,8 +37,9 @@ int main() {
 
         char c = 'r';
         while (c == 'r') {
+            cout << BOLD << GREEN_FG << it->second.first << "\n";
             cout << RESET;
-            it->second();
+            it->second.second();
             cout << BLUE_FG_BOLD;
             cout << "[e]xit, [r]estart or [c]ontinue (default)? ";
             cin >> c;
@@ -49,3 +50,7 @@ int main() {
     }
     cout << "Good bye!";
 }
+
+// 0.012121212
+// 0.030303030
+// 0.103030302
