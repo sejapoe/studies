@@ -32,7 +32,7 @@ void task5_1() {
 
     int a, b;
     cin >> a >> b;
-    while (cin.fail() || a < 0 || b < 0) {
+    while (cin.fail() || a <= 0 || b <= 0) {
         cout << RED_FG << "Invalid input. Try again: ";
         cin.clear();
         cin.ignore(32767, '\n');
