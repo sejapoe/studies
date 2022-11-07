@@ -60,43 +60,20 @@ string convertFromDecimal(int output_notation, double a) {
 
 
 void task5_6() {
-    int n;
     cout << BLUE_FG << "Enter array size... ";
-    cin >> n;
-    while (cin.fail() || n <= 0) {
-        cout << RED_FG << "Invalid input. Try again: ";
-        cin.clear();
-        cin.ignore(32767, '\n');
-        cin >> n;
-    }
+    int n = enter(isPositive);
 
     auto inputArray = new double[n];
-    cout << BLUE_FG << "Enter " << n << " doubles\n";
     for (int i = 0; i < n; i++) {
-        cin >> inputArray[i];
-        if (cin.fail()) break;
+        cout << "Enter " << i << "th double: ";
+        inputArray[i] = enter(anyDouble);
     }
-    while (cin.fail()) {
-        cout << RED_FG << "Invalid input. Try again (start over)\n";
-        cin.clear();
-        cin.ignore(32767, '\n');
-        for (int i = 0; i < n; i++) {
-            cin >> inputArray[i];
-            if (cin.fail()) break;
-        }
-    }
-
 
     cout << BLUE_FG << "Enter target notation (2-9)... ";
 
-    int notation;
-    cin >> notation;
-    while (cin.fail() || notation < 2 || notation > 9) {
-        cout << RED_FG << "Invalid input. Try again: ";
-        cin.clear();
-        cin.ignore(32767, '\n');
-        cin >> notation;
-    }
+    int notation = enter(static_cast<function<bool(int)>>([](int t) {
+        return t >= 2 && t <= 9;
+    }));
 
     auto resultArray = new string[n];
     for (int i = 0; i < n; i++) {

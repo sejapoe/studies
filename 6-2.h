@@ -7,7 +7,7 @@
 
 using namespace std;
 
-string const colors[]  = {
+string const colors[] = {
         "цзя",
         "и",
         "бин",
@@ -21,39 +21,32 @@ string const colors[]  = {
 };
 
 string const colorCodes[] = {
-    GREEN_FG,
-    RED_FG,
-    YELLOW_FG,
-    WHITE_FG,
-    BLUE_FG
+        GREEN_FG,
+        RED_FG,
+        YELLOW_FG,
+        WHITE_FG,
+        BLUE_FG
 };
 
-string const animals[] =  {
-    "цзы",
-    "чоу",
-    "инь",
-    "мао",
-    "чэнь",
-    "сы",
-    "у",
-    "вэй",
-    "шэнь",
-    "ю",
-    "сюй",
-    "хай"
+string const animals[] = {
+        "цзы",
+        "чоу",
+        "инь",
+        "мао",
+        "чэнь",
+        "сы",
+        "у",
+        "вэй",
+        "шэнь",
+        "ю",
+        "сюй",
+        "хай"
 };
 
 void task6_2() {
-    cout << "Enter year: ";
+    cout << GREEN_FG << "Enter year: " << RESET;
 
-    int year;
-    cin >> year;
-    while (cin.fail() || year <= 0) {
-        cout << RED_FG << "Invalid input. Try again: ";
-        cin.clear();
-        cin.ignore(32767, '\n');
-        cin >> year;
-    }
+    int year = enter(isPositive);
 
     year += 56;
     int color = year % 10;

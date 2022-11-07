@@ -12,18 +12,6 @@ int const N = 5;
 int const a = -3;
 int const b = 6;
 
-int enterInt() {
-    int t;
-    cin >> t;
-    while (cin.fail()) {
-        cout << RED_FG << "Invalid input. Try again: ";
-        cin.clear();
-        cin.ignore(32767, '\n');
-        cin >> t;
-    }
-    return t;
-}
-
 void printMatrix(int **arr) {
     for (int i = 0; i < M; i++) {
         for (int j = 0; j < N; j++) {
@@ -50,7 +38,7 @@ void task6_6() {
     for (int i = 0; i < M; ++i) {
         for (int j = 0; j < N; ++j) {
             cout << BLUE_FG << "Enter A[" << i << "][" << j << "]: " << RESET;
-            A[i][j] = enterInt();
+            A[i][j] = enter(anyInt);
             B[i][j] = i * j - (5 - i - j);
             C[i][j] = std::rand() % (b - a) + a; // NOLINT(cert-msc50-cpp)
             E[i][j] = 1;

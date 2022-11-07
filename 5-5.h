@@ -16,14 +16,7 @@
 void task5_5() {
     cout << BLUE_FG << "Enter n: ";
 
-    int n;
-    cin >> n;
-    while (cin.fail() || n < 0) {
-        cout << RED_FG << "Invalid input. Try again: ";
-        cin.clear();
-        cin.ignore(32767, '\n');
-        cin >> n;
-    }
+    int n = enter(isPositive);
 
     mpf_class y = 1;
     mpf_class prevFact = 1;

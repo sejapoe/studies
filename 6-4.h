@@ -6,13 +6,16 @@
 #define FIRST_6_4_H
 
 void task6_4() {
-    string s;
+    string line;
+    getline(cin, line);
+    stringstream ss(line);
     string res;
-    while (cin >> s) {
+    string s;
+    while (ss >> s) {
         res += s + " ";
     }
     if (!res.empty()) res.erase(res.end() - 1);
-    cout << res;
+    cout << GREEN_FG << res << RESET << "\n";
 }
 
 #endif //FIRST_6_4_H

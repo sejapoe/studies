@@ -84,35 +84,23 @@ public:
     }
 };
 
-double enterDouble() {
-    double t;
-    cin >> t;
-    while (cin.fail()) {
-        cout << RED_FG << "Invalid input. Try again: ";
-        cin.clear();
-        cin.ignore(32767, '\n');
-        cin >> t;
-    }
-    return t;
-}
-
 void task6_5() {
     cout << BLUE_FG << "Enter real part of u: " << RESET;
-    double u1 = enterDouble();
+    double u1 = enter(anyDouble);
     cout << BLUE_FG << "Enter imaginary part of u: " << RESET;
-    double u2 = enterDouble();
+    double u2 = enter(anyDouble);
     ComplexNumber u(u1, u2);
 
     cout << BLUE_FG << "Enter real part of v: " << RESET;
-    double v1 = enterDouble();
+    double v1 = enter(anyDouble);
     cout << BLUE_FG << "Enter imaginary part of v: " << RESET;
-    double v2 = enterDouble();
+    double v2 = enter(anyDouble);
     ComplexNumber v(v1, v2);
 
     cout << BLUE_FG << "Enter real part of w: " << RESET;
-    double w1 = enterDouble();
+    double w1 = enter(anyDouble);
     cout << BLUE_FG << "Enter imaginary part of w: " << RESET;
-    double w2 = enterDouble();
+    double w2 = enter(anyDouble);
     ComplexNumber w(w1, w2);
 
     ComplexNumber result =

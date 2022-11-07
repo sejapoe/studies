@@ -10,7 +10,7 @@
 #include <fstream>
 #include "colors.h"
 
-int findIndex(const string& str, const char& c) {
+int findIndex(const string &str, const char &c) {
     for (int i = 0; i < str.length(); i++) {
         if (c == str[i]) return i;
     }

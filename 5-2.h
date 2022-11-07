@@ -11,14 +11,9 @@
 void task5_2() {
     cout << BLUE_FG << "Enter N: ";
 
-    int n;
-    cin >> n;
-    while (cin.fail() || n < 2) {
-        cout << RED_FG << "Invalid input. Try again: ";
-        cin.clear();
-        cin.ignore(32767, '\n');
-        cin >> n;
-    }
+    int n = enter(static_cast<function<bool(int)>>([](int t) {
+        return t > 2;
+    }));
 
     int *a = new int[n - 1];
     for (int i = 2; i <= n; i++) {

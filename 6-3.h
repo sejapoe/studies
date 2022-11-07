@@ -288,12 +288,12 @@ void printField(const Field &field) {
     cout << field.neighbours.size() << "\n";
 }
 
-template <typename F>
-void measureTime(ostream &out, F&& lambda) {
+template<typename F>
+void measureTime(ostream &out, F &&lambda) {
     auto start = chrono::high_resolution_clock::now();
     lambda();
     auto stop = chrono::high_resolution_clock::now();
-    out << "\n"<< chrono::duration_cast<chrono::microseconds>((stop - start)).count() << "mcs\n";
+    out << "\n" << chrono::duration_cast<chrono::microseconds>((stop - start)).count() << "mcs\n";
 }
 
 void task6_3() {
@@ -304,12 +304,12 @@ void task6_3() {
     int n = 1;
     while (true) {
         cout << "Simulate days: ";
-        cin >> n;
-        if (n == 0) break;
+        n = enter(anyInt);
+        if (n <= 0) break;
 
         cout << "\n\n";
 
-        measureTime(cout, [&field, &n](){
+        measureTime(cout, [&field, &n]() {
             for (int i = 0; i < n; i++) {
                 field.oneDayLater();
             }
