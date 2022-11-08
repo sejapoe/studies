@@ -12,6 +12,7 @@
 
 #ifndef FIRST_6_6_H
 #define FIRST_6_6_H
+#include <functional>
 
 using namespace std;
 
@@ -29,6 +30,14 @@ void printMatrix(int **arr) {
     }
 }
 
+void fillWith(int **arr, int (*foo)(int, int)) {
+    for (int i = 0; i < M; ++i) {
+        for (int j = 0; j < N; ++j) {
+            arr[i][j] = foo(i, j);
+        }
+    }
+}
+
 void task6_6() {
     int **A = new int *[M];
     int **B = new int *[M];
@@ -43,13 +52,25 @@ void task6_6() {
         E[i] = new int[N];
     }
 
+    fillWith(A, [](int i, int j) {
+        cout << BLUE_FG << "Enter A[" << i << "][" << j << "]: " << RESET;
+        return enter(anyInt);
+    });
+
+    fillWith(B, [](int i, int j) {
+        return i * j - (5 - i - j);
+    });
+
+    fillWith(C, [](int i, int j) {
+        return std::rand() % (b - a) + a; // NOLINT(cert-msc50-cpp)
+    });
+
+    fillWith(E, [](int i, int j) {
+        return 1;
+    });
+
     for (int i = 0; i < M; ++i) {
         for (int j = 0; j < N; ++j) {
-            cout << BLUE_FG << "Enter A[" << i << "][" << j << "]: " << RESET;
-            A[i][j] = enter(anyInt);
-            B[i][j] = i * j - (5 - i - j);
-            C[i][j] = std::rand() % (b - a) + a; // NOLINT(cert-msc50-cpp)
-            E[i][j] = 1;
             D[i][j] = 6 * E[i][j] - C[i][j] - 2 * B[i][j] - 3 * A[i][j];
         }
     }
