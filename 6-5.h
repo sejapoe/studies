@@ -1,6 +1,10 @@
 //
 // Created by sejapoe on 11/7/22.
 //
+// 76. Даны действительные числа u1 , u2 , v1 , v2 , w1 , w2 .
+// Получить 2u + 3uw/(2 + w - v) − 7,
+// где u, w, v – комплексные числа (u1 + iu2), (v1 + iv2 ), (w1 + iw2).
+// Определить процедуры выполнения арифметических операций над комплексными числами.
 
 #ifndef FIRST_6_5_H
 #define FIRST_6_5_H
@@ -104,7 +108,7 @@ void task6_5() {
     ComplexNumber w(w1, w2);
 
     ComplexNumber result =
-            u * 2.0 + (u * w * 3.0) / (w + v + 2.0) - 7.0;
+            u * 2.0 + (u * w * 3.0) / (w - v + 2.0) - 7.0;
     cout << GREEN_FG << "Result is " << result << RESET << "\n";
 }
 

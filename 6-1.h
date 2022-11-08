@@ -1,6 +1,7 @@
 //
 // Created by sejapoe on 10/30/22.
 //
+// Шарики
 
 #ifndef FIRST_6_1_H
 #define FIRST_6_1_H
