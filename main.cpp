@@ -34,26 +34,35 @@ int main() {
             {"6-5", {"76. Операции с комплексными числами",                            task6_5}},
             {"6-6", {"56а. Танцы с бубном (матрицами)",                                task6_6}}
     };
-    cout << BLUE_FG_BOLD;
     while (true) {
-        cout << "Enter task number (e.g. 5-1): ";
+        cout << BLUE_FG_BOLD << "Enter task number (e.g. 5-1): ";
 
         std::function<bool (string)> isValidTask = [&functions] (const string& s) {
-            return functions.find(s) != functions.end();
+            return s == "list" || functions.find(s) != functions.end();
         };
         string s = enter(isValidTask);
+
+        if (s == "list") {
+            for (const auto& func : functions) {
+                cout << RESET << GREEN_FG << func.first << "\t" << func.second.first << "\n";
+            }
+            continue;
+        }
 
         auto it = functions.find(s);
 
         char c = 'r';
-        while (c == 'r') {
-            cout << BOLD << GREEN_FG << it->second.first << "\n";
-            cout << RESET;
+        while (c == 'r' || c == 'n') {
+            cout << BOLD << GREEN_FG << it->first << ": " << it->second.first << "\n"
+                << RESET << "\n";
             it->second.second();
-            cout << BLUE_FG_BOLD;
-            cout << "[e]xit, [r]estart or [c]ontinue (default)? ";
+            cout << "\n" << BLUE_FG_BOLD << "[e]xit, [r]estart, [n]ext or [c]hoose (default)? ";
             cin >> c;
             cin.ignore(32767, '\n');
+
+            if (c == 'n' && ++it == functions.end()) {
+                it = functions.begin();
+            }
         }
 
         if (c == 'e') break;
