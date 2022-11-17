@@ -15,6 +15,49 @@
 #include <chrono>
 #include <thread>
 #include <random>
+#include <ostream>
+
+struct AnimalProps {
+    double population;
+    int maxEnergy;
+    int energyByFood;
+    int deathAge;
+    int pregnancyDuration;
+
+    AnimalProps(const double population, const int maxEnergy, const int energyByFood,
+                const int deathAge, const int pregnancyDuration)
+            : maxEnergy(maxEnergy), energyByFood(energyByFood),
+              deathAge(deathAge), pregnancyDuration(pregnancyDuration), population(population) {}
+
+    AnimalProps(mt19937 &mt) {
+        std::uniform_real_distribution<double> dist0to1{0.0, 1.0};
+        std::uniform_int_distribution<int> dist1to100{1, 100};
+
+        population = dist0to1(mt);
+        maxEnergy = dist1to100(mt);
+
+        std::uniform_int_distribution<int> dist1toMax(1, maxEnergy + 1);
+
+        energyByFood = dist1toMax(mt);
+        deathAge = dist1to100(mt);
+
+        std::uniform_int_distribution<int> dist1toDeath(1, deathAge / 2 + 2);
+
+        pregnancyDuration = dist1toDeath(mt);
+    }
+
+    friend ostream &operator<<(ostream &os, const AnimalProps &props) {
+        os << props.population << "," << props.maxEnergy << ","
+           << props.energyByFood << "," << props.deathAge << ","
+           << props.pregnancyDuration;
+        return os;
+    }
+};
+
+struct FieldData {
+    int wolfCount;
+    int sheepCount;
+};
 
 struct Animal {
     uint age{0};
@@ -57,10 +100,18 @@ struct Animal {
 
 struct Wolf : Animal {
     explicit Wolf(bool isMale) : Animal(isMale, 50, 20, true, 1, 30) {}
+
+    Wolf(bool isMale, AnimalProps const &animalProps)
+            : Animal(isMale, animalProps.maxEnergy, animalProps.energyByFood, true, animalProps.pregnancyDuration,
+                     animalProps.deathAge) {}
 };
 
 struct Sheep : Animal {
     explicit Sheep(bool isMale) : Animal(isMale, 30, 10, false, 2, 10) {}
+
+    Sheep(bool isMale, AnimalProps const &animalProps)
+            : Animal(isMale, animalProps.maxEnergy, animalProps.energyByFood, false, animalProps.pregnancyDuration,
+                     animalProps.deathAge) {}
 };
 
 struct Cell {
@@ -74,11 +125,8 @@ struct Cell {
     [[nodiscard]] Cell copy() const {
         return {animal == nullptr ? nullptr : new Animal(*animal), hasGrass};
     }
-
-    ~Cell() {
-//        delete animal;
-    }
 };
+
 
 struct Field {
     // Random stuff
@@ -91,6 +139,8 @@ struct Field {
     vector<vector<Cell>> _field;
     vector<pair<pair<int, int>, pair<int, int>>> neighbours;
 
+    FieldData data{0, 0};
+
     int deaths{0};
     int breeds{0};
     int kills{0};
@@ -99,12 +149,12 @@ struct Field {
 
     int day{0};
 
-    Field(int size, double wolfPopulation,
-          double sheepPopulation,
+    Field(int size, AnimalProps const &wolfProps,
+          AnimalProps const &sheepProps,
           double grassPopulation,
           double grassSplitChance) : size(size), grassSplitChance(grassSplitChance),
                                      _field(size, vector<Cell>(size)) {
-        if (wolfPopulation + sheepPopulation > 1.0)
+        if (wolfProps.population + sheepProps.population > 1.0)
             throw invalid_argument("wolf and sheep population together must be lesser than 1.0");
 
         for (int i = 0; i < size; i++) {
@@ -114,10 +164,12 @@ struct Field {
                 }
 
                 double animalPicker = dist0to1(mt);
-                if (animalPicker < sheepPopulation) {
-                    _field[i][j].animal = new Sheep(dist0to1(mt) < 0.5);
-                } else if (animalPicker - sheepPopulation < wolfPopulation) {
-                    _field[i][j].animal = new Wolf(dist0to1(mt) < 0.5);
+                if (animalPicker < sheepProps.population) {
+                    _field[i][j].animal = new Sheep(dist0to1(mt) < 0.5, sheepProps);
+                    data.sheepCount++;
+                } else if (animalPicker - sheepProps.population < wolfProps.population) {
+                    _field[i][j].animal = new Wolf(dist0to1(mt) < 0.5, wolfProps);
+                    data.wolfCount++;
                 }
             }
         }
@@ -216,10 +268,10 @@ struct Field {
             target->animal->pregnancyTimer = 0;
             if (target->animal->isPredator) {
                 source.animal = new Wolf(dist0to1(mt) < 0.5);
-                birthsWolf++;
+                data.wolfCount++;
             } else {
                 source.animal = new Sheep(dist0to1(mt) < 0.5);
-                birthsSheep++;
+                data.sheepCount++;
             }
         }
     }
@@ -229,6 +281,11 @@ struct Field {
         if (cell.animal->energy > 0 && cell.animal->age < cell.animal->deathAge) return;
 
 //        delete cell.animal;
+        if (cell.animal->isPredator) {
+            data.wolfCount--;
+        } else {
+            data.sheepCount--;
+        }
         cell.animal = nullptr;
         deaths++;
     }
@@ -251,6 +308,7 @@ struct Field {
 
         if (predator.animal->eat()) {
 //            delete victim.animal;
+            data.sheepCount--;
             victim.animal = nullptr;
             kills++;
         }
@@ -304,7 +362,9 @@ void measureTime(ostream &out, F &&lambda) {
 }
 
 void task6_3() {
-    Field field(20, 0.05, 0.3, 1, 1);
+    AnimalProps wolfProps(0.05, 50, 20, 30, 1);
+    AnimalProps sheepProps(0.3, 30, 10, 10, 2);
+    Field field(20, wolfProps, sheepProps, 1, 1);
 
     printField(field);
 
@@ -325,6 +385,100 @@ void task6_3() {
         printField(field);
     }
 }
+
+void bar(const AnimalProps &wolfProps, const AnimalProps &sheepProps, int &sheepDoomsday, int &wolfDoomsday,
+         const int &size) {
+    sheepDoomsday = -1;
+    wolfDoomsday = -1;
+    Field field(20, wolfProps, sheepProps, 1, 1);
+    while (field.day < 1000) {
+        if (field.data.sheepCount <= 0 && sheepDoomsday == -1) {
+            sheepDoomsday = field.day;
+        }
+
+        if (field.data.wolfCount <= 0) {
+            wolfDoomsday = field.day;
+            break;
+        }
+
+        for (int j = 0; j < 10; j++) {
+            field.oneDayLater();
+        }
+    }
+}
+
+void findOptimal() {
+    ofstream file0("../life_base");
+    ofstream file1("../life_normally");
+    ofstream file2("../life_chad");
+    ofstream file("../life_data.csv");
+
+    file <<
+         "size,"
+         "wolf_population,wolf_max_energy,wolf_energy_by_food,wolf_death_age,wolf_pregnancy_duration,"
+         "sheep_population,sheep_max_energy,sheep_energy_by_food,sheep_death_age,sheep_pregnancy_duration,"
+         "minuses,wolf_doomsday,"
+         "sheep_doomsday\n";
+
+    std::random_device rd{};
+    std::mt19937 mt{rd()};
+    std::uniform_int_distribution<int> dist10to50{10, 50};
+
+    for (int i = 0; i < 1000; i++) {
+        AnimalProps wolfProps(0.1, 20, 10, 70, 15);
+        AnimalProps sheepProps(0.6, 70, 20, 60, 5);
+        if (wolfProps.population + sheepProps.population > 1.0) {
+            i--;
+            continue;
+        }
+        int size = 10 + i / 100 * 10;
+        int tries = 1;
+
+        int sheepT = 0;
+        int wolfT = 0;
+        int minuses = 0;
+
+        int sheepDoomsday;
+        int wolfDoomsday;
+        for (int j = 0; j < tries; j++) {
+            bar(wolfProps, sheepProps, sheepDoomsday, wolfDoomsday, size);
+            sheepT += sheepDoomsday;
+            wolfT += wolfDoomsday;
+            if (wolfDoomsday == -1) minuses++;
+        }
+
+        file << size << "," << wolfProps << "," << sheepProps << "," << minuses << "," << wolfDoomsday << ","
+             << sheepDoomsday << "\n";
+
+        (minuses == tries ? file2 : (minuses >= 1 ? file1 : file0))
+                << "Wolf: " << wolfProps << "\n"
+                << "Sheep: " << sheepProps << "\n"
+                << "Size: " << size << "\n"
+                << "Minuses: " << minuses << "\n"
+                << "Wolf doomsday: " << wolfT / tries
+                << "\nSheep doomsday: " << sheepT / tries << "\n\n\n";
+    }
+}
+
+void testThis() {
+    ofstream file("../life2");
+    AnimalProps wolfProps(0.37, 31, 16, 75, 37);
+    AnimalProps sheepProps(0.35, 45, 9, 94, 1);
+    for (int i = 0; i < 1000; i++) {
+        int sheepDoomsday;
+        int wolfDoomsday;
+        bar(wolfProps, sheepProps, sheepDoomsday, wolfDoomsday, 0);
+
+        file << "Wolf: " << wolfProps << "\n";
+        file << "Sheep: " << sheepProps << "\n";
+        file << "Wolf doomsday: " << wolfDoomsday << " Sheep doomsday: " << sheepDoomsday << "\n\n\n";
+    }
+}
+/*
+Wolf: population: 0.374111 maxEnergy: 31 energyByFood: 16 deathAge: 75 pregnancyDuration: 37
+Sheep: population: 0.351576 maxEnergy: 46 energyByFood: 9 deathAge: 94 pregnancyDuration: 1
+ *
+ */
 /*
 grass dist0to1
 wolf eat
